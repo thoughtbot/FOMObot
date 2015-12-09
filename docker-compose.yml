@@ -1,0 +1,12 @@
+web:
+  build: .
+  command: cabal run
+  environment:
+    LANG: "en_US.UTF-8"
+    SLACK_API_TOKEN: "Something Cool"
+  stdin_open: true
+  volumes:
+    - .:/app
+  ports:
+    - "443:443"
+

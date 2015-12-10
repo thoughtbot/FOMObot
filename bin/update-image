@@ -2,6 +2,11 @@
 
 set -e
 
+if [ "$(uname)" = Darwin ]; then
+  docker-machine start dev || true
+  eval "$(docker-machine env dev)"
+fi
+
 docker build --rm -t thoughtbot/fomobot .
 docker tag -f thoughtbot/fomobot thoughtbot/fomobot:latest
 docker push thoughtbot/fomobot

@@ -19,7 +19,10 @@ cabal-version:       >=1.10
 executable fomobot
   main-is:             Main.hs
   -- other-modules:       
-  -- other-extensions:    
+  extensions:          OverloadedStrings
+                     , DeriveGeneric
+                     , DeriveAnyClass 
+
   build-depends:       base >=4.8 && <4.9
                      , wreq
                      , aeson

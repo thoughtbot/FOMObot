@@ -21,7 +21,12 @@ Optionally, you can install these via the [instructions] on their website.
 
 [instructions]: https://docs.docker.com/engine/installation
 
-Make sure to [setup Docker Machine] properly if it's your first time using it.
+Also, Docker uses [VirtualBox] so you'll need that too.
+
+[VirtualBox]: https://www.virtualbox.org/wiki/Downloads
+
+Now, Make sure to [setup Docker Machine] properly if it's your first time using
+it.
 
 [setup Docker Machine]: https://docs.docker.com/machine/get-started
 

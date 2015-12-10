@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 docker build --rm -t thoughtbot/fomobot .
 docker tag -f thoughtbot/fomobot thoughtbot/fomobot:latest
 docker push thoughtbot/fomobot

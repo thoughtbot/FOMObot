@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+cabal clean
+cabal configure -fproduction
+cabal build
+
+tar czf ./slug.tgz -C / --exclude=.git --exclude=slug.tgz ./app

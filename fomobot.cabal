@@ -19,7 +19,7 @@ cabal-version:       >=1.10
 executable fomobot
   main-is:             Main.hs
   -- other-modules:
-  extensions:          OverloadedStrings
+  default-extensions:  OverloadedStrings
                      , DeriveGeneric
                      , DeriveAnyClass
 
@@ -29,6 +29,8 @@ executable fomobot
                      , lens
                      , websockets
                      , text
+                     , network-uri
+                     , wuss
 
   hs-source-dirs:      src
   default-language:    Haskell2010

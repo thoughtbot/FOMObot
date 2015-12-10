@@ -7,6 +7,6 @@ if [ "$(uname)" = Darwin ]; then
   eval "$(docker-machine env dev)"
 fi
 
-docker build --rm -t thoughtbot/fomobot .
+docker --debug=true --log-level=debug build --rm -t thoughtbot/fomobot .
 docker tag -f thoughtbot/fomobot thoughtbot/fomobot:latest
 docker push thoughtbot/fomobot

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+has_all_commands=1
+
+if [ "$(uname)" = Darwin ]; then
+  # OSX
+  commands="docker docker-compose docker-machine"
+else
+  commands="docker docker-compose"
+fi
+
+for command in $commands; do
+  if ! command -v "$command" > /dev/null; then
+    printf "Please install %s (brew install %s)\n" "$command" "$command"
+    has_all_commands=0
+  fi
+done
+
+if [ "$has_all_commands" = 0 ]; then
+  exit 1
+fi
+
+./bin/run

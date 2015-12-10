@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$(uname)" = Darwin ]; then
+  docker-machine start dev
+  eval "$(docker-machine env dev)"
+fi
+
+docker-compose up

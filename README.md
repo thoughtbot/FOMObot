@@ -12,12 +12,13 @@ other cli tools.
 [Docker]: https://docker.com
 [Homebrew]: http://brew.sh
 
+Run:
+
 ```
-brew update
-brew install docker docker-machine docker-compose
+./bin/setup
 ```
 
-Optionally, you can install these via the [instructions] on their website.
+Optionally, you can install docker, docker-compose, and docker-machine (OSX), etc via the [instructions] on their website.
 
 [instructions]: https://docs.docker.com/engine/installation
 
@@ -41,15 +42,11 @@ Run `docker login` to login to Docker using your Docker Hub creds.
 
 ## Running Locally
 
-First, make sure your Docker Machine instance is running and you've exported the
-environment variables:
+Run this:
 
 ```
-docker-machine start dev
-eval "$(docker-machine env dev)"
+./bin/run
 ```
-
-Then run `docker-compose up`
 
 ## Updating the Dependencies
 

@@ -2,7 +2,6 @@ web:
   image: thoughtbot/fomobot
   command: cabal run
   environment:
-    LANG: "en_US.UTF-8"
     SLACK_API_TOKEN: "xoxb-4375956194-kvlljrTk9LWIi5RxhqfrScu4"
   stdin_open: true
   tty: true

@@ -1,10 +1,7 @@
-module FOMObot.MessageParser
-    ( parseMessage
-    ) where
+module FOMObot.Types.Message where
 
-import Data.Aeson (eitherDecode, FromJSON, parseJSON, (.:), Value(..))
+import Data.Aeson (FromJSON, parseJSON, (.:), Value(..))
 import Data.Aeson.Types (typeMismatch)
-import qualified Data.ByteString.Lazy as BSL (ByteString)
 
 data Message = Message
     { _type :: String
@@ -20,6 +17,4 @@ instance FromJSON Message where
 
     parseJSON invalid = typeMismatch "Message" invalid
 
-parseMessage :: BSL.ByteString -> Either String Message
-parseMessage = eitherDecode
 

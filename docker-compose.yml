@@ -7,5 +7,3 @@ web:
   stdin_open: true
   volumes:
     - .:/app
-  # ports:
-  #   - "443:443"

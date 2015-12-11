@@ -29,6 +29,7 @@ executable fomobot
                      , lens
                      , websockets
                      , text
+                     , bytestring
                      , network-uri
                      , wuss
 

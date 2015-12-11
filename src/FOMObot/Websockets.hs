@@ -8,7 +8,8 @@ import Network.URI (URI(..), uriRegName)
 import qualified Wuss (runSecureClient)
 import qualified Network.WebSockets as WS
 import qualified Data.Text as T
-import qualified Data.Text.IO as T
+
+import FOMObot.MessageParser (parseMessage)
 
 app :: WS.ClientApp ()
 app connection = do
@@ -16,7 +17,8 @@ app connection = do
 
     void . forever $ do
         message <- WS.receiveData connection
-        T.putStrLn message
+        let msg = parseMessage message
+        print msg
 
     WS.sendClose connection $ T.pack "Bye!"
 

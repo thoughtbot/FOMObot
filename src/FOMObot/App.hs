@@ -16,6 +16,6 @@ runApp :: IO ()
 runApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
     response <- rtmStartResponse token
-    let socketURL = url $ response ^. responseBody
+    let socketURL = _url $ response ^. responseBody
     let uri = fromJust $ parseURI socketURL
     runSecureClient uri

@@ -6,7 +6,7 @@ import Data.Maybe (fromJust)
 import Control.Monad (forever, void)
 import Network.URI (URI(..), uriRegName)
 import Data.Aeson (eitherDecode)
-import qualified Wuss (runSecureClient)
+import qualified Wuss
 import qualified Network.WebSockets as WS
 import qualified Data.Text as T
 

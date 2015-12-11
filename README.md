@@ -71,7 +71,7 @@ brew install heroku-toolbelt jq
 ```
 
 Create a Heroku account if you don't already have one. Request to be invited to
-the `slack-fomobot` app.
+the `fomobot-production` app.
 
 Finally, login to Heroku by running `heroku login`.
 
@@ -80,4 +80,4 @@ Finally, login to Heroku by running `heroku login`.
 Simply run `bin/deploy`. This will clean and build the cabal executable, build a
 docker slug, release the slug to the Heroku app.
 
-You can monitor the logs by running `heroku logs --app slack-fomobot`.
+You can monitor the logs by running `heroku logs --app fomobot-production`.

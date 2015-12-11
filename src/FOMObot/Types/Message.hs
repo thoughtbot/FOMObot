@@ -16,5 +16,3 @@ instance FromJSON Message where
         <*> o .: "ts"
 
     parseJSON invalid = typeMismatch "Message" invalid
-
-

@@ -1,14 +1,15 @@
-import System.Environment
-import GHC.Generics
+import System.Environment (getEnv)
+import GHC.Generics (Generic)
 import Data.Maybe (fromJust)
 import Control.Monad (forever, void)
-import Control.Lens
-import Data.Aeson
-import Network.URI
+import Control.Lens ((.~), (&), (^.))
+import Data.Aeson (FromJSON)
+import Network.URI (URI(..), parseURI, uriRegName)
 import Network.Wreq (getWith, asJSON, Response, defaults, param, responseBody)
-import Wuss
+import Wuss (runSecureClient)
 import qualified Network.WebSockets as WS
 import qualified Data.Text as T
+import qualified Data.Text.IO as T
 
 app :: WS.ClientApp ()
 app connection = do
@@ -16,9 +17,9 @@ app connection = do
 
     void . forever $ do
         message <- WS.receiveData connection
-        print (message :: T.Text)
+        T.putStrLn message
 
-    WS.sendClose connection (T.pack "Bye!")
+    WS.sendClose connection $ T.pack "Bye!"
 
 data RTMStartResponse = RTMStartResponse { url :: String }
   deriving (Generic, FromJSON, Show)
@@ -29,9 +30,10 @@ rtmStartResponse token = asJSON =<< getWith opts "https://slack.com/api/rtm.star
         opts = defaults & param "token" .~ [token]
 
 runSecureClient' :: URI -> IO ()
-runSecureClient' uri = runSecureClient host 443 (uriPath uri) app
+runSecureClient' uri = runSecureClient host 443 path app
     where
         host = fromJust $ uriRegName <$> uriAuthority uri
+        path = uriPath uri
 
 main :: IO ()
 main = do

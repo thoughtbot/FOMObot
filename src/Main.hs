@@ -1,4 +1,8 @@
+import System.IO (hSetBuffering, stdout, stderr, BufferMode(..))
+
 import FOMObot.App (runApp)
 
 main :: IO ()
-main = runApp
+main = do
+    hSetBuffering stdout LineBuffering
+    runApp

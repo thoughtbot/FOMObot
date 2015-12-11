@@ -8,6 +8,7 @@ import Network.URI (parseURI)
 import Control.Lens ((^.))
 import Network.Wreq (responseBody)
 import qualified Data.Text as T
+
 import FOMObot.RTM (rtmStartResponse)
 import FOMObot.Websockets (runSecureClient)
 import FOMObot.Types.RTMStartResponse

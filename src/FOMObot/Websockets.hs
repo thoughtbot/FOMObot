@@ -10,21 +10,20 @@ import qualified Wuss
 import qualified Network.WebSockets as WS
 import qualified Data.Text as T
 
-import FOMObot.Types.Message
+import FOMObot.Types.MessageProcessor
 
-app :: WS.ClientApp ()
-app connection = do
+app :: MessageProcessor -> WS.ClientApp ()
+app processor connection = do
     putStrLn "Connected!"
 
     void . forever $ do
         message <- WS.receiveData connection
-        let msg = eitherDecode message :: Either String Message
-        print msg
+        processor $ eitherDecode message
 
     WS.sendClose connection $ T.pack "Bye!"
 
-runSecureClient :: URI -> IO ()
-runSecureClient uri = Wuss.runSecureClient host 443 path app
+runSecureClient :: URI -> MessageProcessor -> IO ()
+runSecureClient uri processor = Wuss.runSecureClient host 443 path $ app processor
     where
         host = fromJust $ uriRegName <$> uriAuthority uri
         path = uriPath uri

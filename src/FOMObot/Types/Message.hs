@@ -7,6 +7,7 @@ data Message = Message
     { _type :: String
     , _channel :: String
     , _ts :: String
+    , _text :: String
     } deriving (Show)
 
 instance FromJSON Message where
@@ -14,5 +15,6 @@ instance FromJSON Message where
         <$> o .: "type"
         <*> o .: "channel"
         <*> o .: "ts"
+        <*> o .: "text"
 
     parseJSON invalid = typeMismatch "Message" invalid

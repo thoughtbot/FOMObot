@@ -1,4 +1,4 @@
-import System.IO (hSetBuffering, stdout, stderr, BufferMode(..))
+import System.IO (hSetBuffering, stdout, BufferMode(..))
 
 import FOMObot.App (runApp)
 

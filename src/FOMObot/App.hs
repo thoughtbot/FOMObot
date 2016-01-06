@@ -1,5 +1,5 @@
 module FOMObot.App
-    ( runApp
+    ( initApp
     ) where
 
 import System.Environment (getEnv)
@@ -8,7 +8,7 @@ import Network.URI (parseURI)
 import Control.Lens ((^.))
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Reader (ask)
-import Control.Monad.State (get, put)
+import Control.Monad.State (get, modify)
 import Network.Wreq (responseBody)
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.Text as T
@@ -39,8 +39,8 @@ alertChannel channel = do
         responseData = encode message
         message = Message "message" channel "" $ concat ["Check out <#", channel, ">"]
 
-runBot :: Bot ()
-runBot = do
+runApp :: Bot ()
+runApp = do
     connection <- ask
     state <- get
 
@@ -49,10 +49,10 @@ runBot = do
     liftIO $ print $ "state: " ++ (show state)
     modify (+1)
 
-runApp :: IO ()
-runApp = do
+initApp :: IO ()
+initApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
     response <- rtmStartResponse token
     let socketURL = _url $ response ^. responseBody
     let uri = fromJust $ parseURI socketURL
-    runSecureClient uri runBot
+    runSecureClient uri runApp

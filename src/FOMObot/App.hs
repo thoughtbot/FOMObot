@@ -7,26 +7,24 @@ import Data.Maybe (fromJust)
 import Network.URI (parseURI)
 import Control.Lens ((^.))
 import Control.Monad.Trans (liftIO)
-import Control.Monad.Reader (ask)
 import Control.Monad.State (get, modify)
 import Network.Wreq (responseBody)
-import Data.Aeson (eitherDecode)
 import qualified Data.Text as T
-import qualified Network.WebSockets as WS
 
 import FOMObot.RTM (rtmStartResponse)
 import FOMObot.Websockets (runSecureClient)
 import FOMObot.Helpers.Bot
 import FOMObot.Types.RTMStartResponse
+import FOMObot.Types.Message
 import FOMObot.Types.Bot
 
 runApp :: Bot ()
 runApp = do
-    connection <- ask
     state <- get
 
-    message <- liftIO $ WS.receiveData connection
-    processMessage $ eitherDecode message
+    message@(Message _ channel _ text) <- receiveMessage
+    printMessage message
+    sendMessage text channel
     liftIO $ print $ "state: " ++ (show state)
     modify (+1)
 

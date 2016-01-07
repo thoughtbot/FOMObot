@@ -6,19 +6,15 @@ module FOMObot.Helpers.Bot
 
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Reader (ask)
-import Data.Aeson (eitherDecode, encode)
+import Control.Monad.Loops (untilJust)
+import Data.Aeson (decode, encode)
 import qualified Network.WebSockets as WS
 
 import FOMObot.Types.Message
 import FOMObot.Types.Bot
 
 receiveMessage :: Bot Message
-receiveMessage = do
-    connection <- ask
-    message <- liftIO $ WS.receiveData connection
-    either doAgain return $ eitherDecode message
-    where
-        doAgain = const receiveMessage
+receiveMessage = liftIO . untilJust . (decode <$>) . WS.receiveData =<< ask
 
 printMessage :: Message -> Bot ()
 printMessage m@(Message t _ _ _)

@@ -11,17 +11,18 @@ import qualified Data.Text as T
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
 
-app :: Bot () -> WS.ClientApp ()
-app bot connection = do
+app :: PartialConfig -> Bot () -> WS.ClientApp ()
+app partialConfig bot connection = do
     putStrLn "Connected!"
 
-    let config = BotConfig connection
+    let config = partialConfig connection
     runBot 0 config bot
 
     WS.sendClose connection $ T.pack "Bye!"
 
-runSecureClient :: URI -> Bot () -> IO ()
-runSecureClient uri bot = Wuss.runSecureClient host 443 path $ app bot
+runSecureClient :: URI -> PartialConfig -> Bot () -> IO ()
+runSecureClient uri partialConfig bot = Wuss.runSecureClient host 443 path clientApp
     where
         host = fromJust $ uriRegName <$> uriAuthority uri
         path = uriPath uri
+        clientApp = app partialConfig bot

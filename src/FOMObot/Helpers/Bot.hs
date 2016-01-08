@@ -2,6 +2,7 @@ module FOMObot.Helpers.Bot
     ( receiveMessage
     , printMessage
     , sendMessage
+    , alertFOMOChannel
     ) where
 
 import Control.Monad.Trans (liftIO)
@@ -29,3 +30,6 @@ printMessage = liftIO . print
 sendMessage :: String -> String -> Bot ()
 sendMessage message channel = let responseData = encode $ Message "message" channel "" message
     in liftIO . (`WS.sendTextData` responseData) =<< _connection <$> ask
+
+alertFOMOChannel :: String -> Bot ()
+alertFOMOChannel message = (sendMessage message) =<< _channelID <$> ask

@@ -9,12 +9,14 @@ import qualified Network.WebSockets as WS
 import qualified Data.Text as T
 
 import FOMObot.Types.Bot
+import FOMObot.Types.BotConfig
 
 app :: Bot () -> WS.ClientApp ()
 app bot connection = do
     putStrLn "Connected!"
 
-    runBot 0 connection bot
+    let config = BotConfig connection
+    runBot 0 config bot
 
     WS.sendClose connection $ T.pack "Bye!"
 

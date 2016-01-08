@@ -14,12 +14,17 @@ import FOMObot.Types.Message
 import FOMObot.Types.Bot
 
 receiveMessage :: Bot Message
-receiveMessage = liftIO . untilJust . (decode <$>) . WS.receiveData =<< ask
+receiveMessage = liftIO . untilJust . (decodeMessage <$>) . WS.receiveData =<< ask
+    where
+        decodeMessage a = decode a >>= filterMessage
+
+filterMessage :: Message -> Maybe Message
+filterMessage m@(Message t _ _ _)
+    | t == "message" = Just m
+    | otherwise = Nothing
 
 printMessage :: Message -> Bot ()
-printMessage m@(Message t _ _ _)
-    | t == "message" = liftIO $ print m
-    | otherwise = return ()
+printMessage = liftIO . print
 
 sendMessage :: String -> String -> Bot ()
 sendMessage message channel = do

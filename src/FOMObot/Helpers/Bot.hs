@@ -5,6 +5,7 @@ module FOMObot.Helpers.Bot
     , alertFOMOChannel
     ) where
 
+import Prelude hiding (filter)
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Reader (ask)
 import Control.Monad.Loops (untilJust)
@@ -16,20 +17,28 @@ import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
 
 receiveMessage :: Bot Message
-receiveMessage = let decodeMessage a = decode a >>= filterMessage
-    in liftIO . untilJust . (decodeMessage <$>) . WS.receiveData =<< _connection <$> ask
+receiveMessage = untilJust . filter . (decode <$>) . receiveData =<< connection
+    where
+        receiveData = liftIO . WS.receiveData
+        filter = (maybe (return Nothing) filterMessage =<<)
 
-filterMessage :: Message -> Maybe Message
-filterMessage m@(Message t _ _ _)
-    | t == "message" = Just m
-    | otherwise = Nothing
+filterMessage :: Message -> Bot (Maybe Message)
+filterMessage m@(Message t c _ _) = (_channelID <$> ask) >>= return . filter
+    where
+        filter fomoChannel
+            | t == "message" && c /= fomoChannel = Just m
+            | otherwise = Nothing
 
 printMessage :: Message -> Bot ()
 printMessage = liftIO . print
 
 sendMessage :: String -> String -> Bot ()
-sendMessage message channel = let responseData = encode $ Message "message" channel "" message
-    in liftIO . (`WS.sendTextData` responseData) =<< _connection <$> ask
+sendMessage message channel = liftIO . (`WS.sendTextData` responseData) =<< connection
+    where
+        responseData = encode $ Message "message" channel "" message
 
 alertFOMOChannel :: String -> Bot ()
 alertFOMOChannel message = (sendMessage message) =<< _channelID <$> ask
+
+connection :: Bot WS.Connection
+connection = _connection <$> ask

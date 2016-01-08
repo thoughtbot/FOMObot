@@ -23,7 +23,7 @@ runApp :: Bot ()
 runApp = do
     state <- get
 
-    message@(Message _ channel _ text) <- receiveMessage
+    message@(Message _ _ _ text) <- receiveMessage
     printMessage message
     alertFOMOChannel text
     liftIO $ print $ "state: " ++ (show state)

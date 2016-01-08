@@ -14,9 +14,8 @@ import FOMObot.Types.Message
 import FOMObot.Types.Bot
 
 receiveMessage :: Bot Message
-receiveMessage = liftIO . untilJust . (decodeMessage <$>) . WS.receiveData =<< ask
-    where
-        decodeMessage a = decode a >>= filterMessage
+receiveMessage = let decodeMessage a = decode a >>= filterMessage
+    in liftIO . untilJust . (decodeMessage <$>) . WS.receiveData =<< ask
 
 filterMessage :: Message -> Maybe Message
 filterMessage m@(Message t _ _ _)
@@ -27,8 +26,5 @@ printMessage :: Message -> Bot ()
 printMessage = liftIO . print
 
 sendMessage :: String -> String -> Bot ()
-sendMessage message channel = do
-    connection <- ask
-    liftIO $ WS.sendTextData connection responseData
-    where
-        responseData = encode $ Message "message" channel "" message
+sendMessage message channel = let responseData = encode $ Message "message" channel "" message
+    in liftIO . (`WS.sendTextData` responseData) =<< ask

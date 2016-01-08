@@ -23,7 +23,7 @@ runApp :: Bot ()
 runApp = do
     state <- get
 
-    message@(Message _ _ _ text) <- receiveMessage
+    message@(Message _ _ _ _ text) <- receiveMessage
     printMessage message
     alertFOMOChannel text
     liftIO $ print $ "state: " ++ (show state)
@@ -33,9 +33,9 @@ initApp :: IO ()
 initApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
     response <- rtmStartResponse token
-    let partialConfig = BotConfig $ _id $ getFOMOChannel response
+    let partialConfig = BotConfig (getFOMOChannelID response) (_selfID response)
     let uri = fromJust $ parseURI $ _url response
     runSecureClient uri partialConfig runApp
     where
-        getFOMOChannel = fromJust . (find isFOMOChannel) . _channels
+        getFOMOChannelID = _id . fromJust . (find isFOMOChannel) . _channels
         isFOMOChannel = (== "fomo") . _name

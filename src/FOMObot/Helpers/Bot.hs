@@ -23,10 +23,10 @@ receiveMessage = untilJust . filter . (decode <$>) . receiveData =<< connection
         filter = (maybe (return Nothing) filterMessage =<<)
 
 filterMessage :: Message -> Bot (Maybe Message)
-filterMessage m@(Message t c _ _) = (_channelID <$> ask) >>= return . filter
+filterMessage m@(Message t c u _ _) = ask >>= return . filter
     where
-        filter fomoChannel
-            | t == "message" && c /= fomoChannel = Just m
+        filter config
+            | t == "message" && c /= _channelID config && u /= _botID config = Just m
             | otherwise = Nothing
 
 printMessage :: Message -> Bot ()
@@ -35,7 +35,7 @@ printMessage = liftIO . print
 sendMessage :: String -> String -> Bot ()
 sendMessage message channel = liftIO . (`WS.sendTextData` responseData) =<< connection
     where
-        responseData = encode $ Message "message" channel "" message
+        responseData = encode $ Message "message" channel "" "" message
 
 alertFOMOChannel :: String -> Bot ()
 alertFOMOChannel message = (sendMessage message) =<< _channelID <$> ask

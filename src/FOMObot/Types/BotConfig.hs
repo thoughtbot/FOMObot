@@ -6,5 +6,6 @@ type PartialConfig = WS.Connection -> BotConfig
 
 data BotConfig = BotConfig
     { _channelID :: String
+    , _botID :: String
     , _connection :: WS.Connection
     }

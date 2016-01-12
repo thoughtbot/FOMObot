@@ -5,7 +5,6 @@ module FOMObot.Helpers.Bot
     , alertFOMOChannel
     ) where
 
-import Prelude hiding (filter)
 import Control.Monad.Trans (liftIO)
 import Control.Monad.Reader (ask)
 import Control.Monad.Loops (untilJust)
@@ -17,16 +16,16 @@ import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
 
 receiveMessage :: Bot Message
-receiveMessage = untilJust . filter . (decode <$>) . receiveData =<< connection
+receiveMessage = untilJust . maybeFilter . (decode <$>) . receiveData =<< connection
     where
         receiveData = liftIO . WS.receiveData
-        filter = (maybe (return Nothing) filterMessage =<<)
+        maybeFilter = (maybe (return Nothing) filterMessage =<<)
 
 filterMessage :: Message -> Bot (Maybe Message)
-filterMessage m@(Message t c u _ _) = ask >>= return . filter
+filterMessage m@Message{..} = ask >>= return . botMessageFilter
     where
-        filter config
-            | t == "message" && c /= _channelID config && u /= _botID config = Just m
+        botMessageFilter config
+            | _type == "message" && _channel /= _channelID config && _user /= _botID config = Just m
             | otherwise = Nothing
 
 printMessage :: Message -> Bot ()

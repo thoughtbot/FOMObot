@@ -16,7 +16,8 @@ app partialConfig bot connection = do
     putStrLn "Connected!"
 
     let config = partialConfig connection
-    runBot 0 config bot
+    let initialMessageCount = 0
+    runBot initialMessageCount config bot
 
     WS.sendClose connection $ T.pack "Bye!"
 

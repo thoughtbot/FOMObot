@@ -16,10 +16,12 @@ import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
 
 receiveMessage :: Bot Message
-receiveMessage = untilJust . maybeFilter . (decode <$>) . receiveData =<< connection
+receiveMessage = do
+    conn <- connection
+    untilJust $ maybeFilter =<< decode <$> receiveData conn
     where
         receiveData = liftIO . WS.receiveData
-        maybeFilter = (maybe (return Nothing) filterMessage =<<)
+        maybeFilter = maybe (return Nothing) filterMessage
 
 filterMessage :: Message -> Bot (Maybe Message)
 filterMessage m@Message{..} = ask >>= return . botMessageFilter

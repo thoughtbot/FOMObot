@@ -1,6 +1,6 @@
 module FOMObot.Helpers.Bot
     ( receiveMessage
-    , printMessage
+    , printBot
     , sendMessage
     , alertFOMOChannel
     , updateState
@@ -36,8 +36,8 @@ filterMessage m@Message{..} = ask >>= return . botMessageFilter
             | _type == "message" && _channel /= _channelID config && _user /= _botID config = Just m
             | otherwise = Nothing
 
-printMessage :: Message -> Bot ()
-printMessage = liftIO . print
+printBot :: Show a => a -> Bot ()
+printBot = liftIO . print
 
 sendMessage :: String -> String -> Bot ()
 sendMessage message channel = liftIO . (`WS.sendTextData` responseData) =<< connection

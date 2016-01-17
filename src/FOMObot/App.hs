@@ -5,7 +5,6 @@ module FOMObot.App
 import System.Environment (getEnv)
 import Data.Maybe (fromJust)
 import Network.URI (parseURI)
-import Control.Monad.Trans (liftIO)
 import Control.Monad.State (get)
 import qualified Data.Text as T
 import Data.List (find)
@@ -22,11 +21,11 @@ import FOMObot.Types.BotConfig
 runApp :: Bot ()
 runApp = do
     message@Message{..} <- receiveMessage
-    printMessage message
+    printBot message
     updateState message
     alertFOMOChannel _text
     state <- get
-    liftIO $ print $ "state: " ++ (show state)
+    printBot $ "state: " ++ (show state)
 
 initApp :: IO ()
 initApp = do

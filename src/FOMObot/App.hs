@@ -6,7 +6,7 @@ import System.Environment (getEnv)
 import Data.Maybe (fromJust)
 import Network.URI (parseURI)
 import Control.Monad.Trans (liftIO)
-import Control.Monad.State (get, modify)
+import Control.Monad.State (get)
 import qualified Data.Text as T
 import Data.List (find)
 
@@ -21,19 +21,20 @@ import FOMObot.Types.BotConfig
 
 runApp :: Bot ()
 runApp = do
-    state <- get
-
     message@Message{..} <- receiveMessage
     printMessage message
+    updateState message
     alertFOMOChannel _text
+    state <- get
     liftIO $ print $ "state: " ++ (show state)
-    modify (+1)
 
 initApp :: IO ()
 initApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
     response <- rtmStartResponse token
-    let partialConfig = BotConfig (getFOMOChannelID response) (_selfID response)
+    longAlpha <- read <$> getEnv "LONG_ALPHA"
+    shortAlpha <- read <$> getEnv "SHORT_ALPHA"
+    let partialConfig = BotConfig (getFOMOChannelID response) (_selfID response) longAlpha shortAlpha
     let uri = fromJust $ parseURI $ _url response
     runSecureClient uri partialConfig runApp
     where

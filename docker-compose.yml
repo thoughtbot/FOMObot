@@ -3,6 +3,8 @@ web:
   command: cabal run
   environment:
     SLACK_API_TOKEN: "xoxb-4375956194-kvlljrTk9LWIi5RxhqfrScu4"
+    LONG_ALPHA: 0.2
+    SHORT_ALPHA: 0.8
   stdin_open: true
   tty: true
   volumes:

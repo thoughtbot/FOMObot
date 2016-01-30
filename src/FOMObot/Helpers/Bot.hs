@@ -32,8 +32,8 @@ receiveMessage = do
 filterMessage :: Message -> Bot (Maybe Message)
 filterMessage m@Message{..} = ask >>= return . botMessageFilter
     where
-        botMessageFilter config
-            | _type == "message" && _channel /= _channelID config && _user /= _botID config = Just m
+        botMessageFilter BotConfig{..}
+            | messageType == "message" && messageChannelID /= configChannelID && messageUserID /= configBotID = Just m
             | otherwise = Nothing
 
 printBot :: Show a => a -> Bot ()
@@ -45,26 +45,26 @@ sendMessage message channel = liftIO . (`WS.sendTextData` responseData) =<< conn
         responseData = encode $ Message "message" channel "" "" message
 
 alertFOMOChannel :: String -> Bot ()
-alertFOMOChannel message = (sendMessage message) =<< _channelID <$> ask
+alertFOMOChannel message = (sendMessage message) =<< configChannelID <$> ask
 
 connection :: Bot WS.Connection
-connection = _connection <$> ask
+connection = configConnection <$> ask
 
 updateState :: Message -> Bot ()
 updateState message = modify =<< (alterState message) <$> ask
 
 alterState :: Message -> BotConfig -> BotState -> BotState
 alterState Message{..} config state
-    | member _channel state = adjust (updateChannelState config _ts) _channel state
-    | otherwise = insert _channel newChannelState state
+    | member messageChannelID state = adjust (updateChannelState config messageTs) messageChannelID state
+    | otherwise = insert messageChannelID newChannelState state
     where
-        newChannelState = ChannelState 1 0 0 _ts
+        newChannelState = ChannelState 1 0 0 messageTs
 
 updateChannelState :: BotConfig -> String -> ChannelState -> ChannelState
-updateChannelState BotConfig{..} ts ChannelState{..} = ChannelState (_count + 1) longAvg shortAvg ts
+updateChannelState BotConfig{..} ts ChannelState{..} = ChannelState (stateCount + 1) longAvg shortAvg ts
     where
-        longAvg = singleExpSmoothing longAlpha _longAvg diff
-        shortAvg = singleExpSmoothing shortAlpha _shortAvg diff
-        longAlpha = realToFrac _longAlpha
-        shortAlpha = realToFrac _shortAlpha
-        diff = diffTime ts _lastTimeStamp 
+        longAvg = singleExpSmoothing longAlpha stateLongAvg diff
+        shortAvg = singleExpSmoothing shortAlpha stateShortAvg diff
+        longAlpha = realToFrac configLongAlpha
+        shortAlpha = realToFrac configShortAlpha
+        diff = diffTime ts stateLastTimeStamp 

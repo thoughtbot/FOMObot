@@ -23,19 +23,19 @@ runApp = do
     message@Message{..} <- receiveMessage
     printBot message
     updateState message
-    alertFOMOChannel _text
+    alertFOMOChannel messageText
     state <- get
     printBot $ "state: " ++ (show state)
 
 initApp :: IO ()
 initApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
-    response <- rtmStartResponse token
+    RTMStartResponse{..} <- rtmStartResponse token
     longAlpha <- read <$> getEnv "LONG_ALPHA"
     shortAlpha <- read <$> getEnv "SHORT_ALPHA"
-    let partialConfig = BotConfig (getFOMOChannelID response) (_selfID response) longAlpha shortAlpha
-    let uri = fromJust $ parseURI $ _url response
+    let partialConfig = BotConfig (getFOMOChannelID responseChannels) responseSelfID longAlpha shortAlpha
+    let uri = fromJust $ parseURI responseURL
     runSecureClient uri partialConfig runApp
     where
-        getFOMOChannelID = _id . fromJust . (find isFOMOChannel) . _channels
-        isFOMOChannel = (== "fomo") . _name
+        getFOMOChannelID = channelID . fromJust . (find isFOMOChannel)
+        isFOMOChannel = (== "fomo") . channelName

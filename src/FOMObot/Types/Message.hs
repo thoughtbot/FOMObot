@@ -4,11 +4,11 @@ import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.:), (.=), Value(..), o
 import Data.Aeson.Types (typeMismatch)
 
 data Message = Message
-    { _type :: String
-    , _channel :: String
-    , _user :: String
-    , _ts :: String
-    , _text :: String
+    { messageType :: String
+    , messageChannelID :: String
+    , messageUserID :: String
+    , messageTs :: String
+    , messageText :: String
     } deriving (Show)
 
 instance FromJSON Message where
@@ -22,8 +22,8 @@ instance FromJSON Message where
     parseJSON invalid = typeMismatch "Message" invalid
 
 instance ToJSON Message where
-    toJSON message = object
-        [ "type"    .= _type message
-        , "channel" .= _channel message
-        , "text"    .= _text message
+    toJSON Message{..} = object
+        [ "type"    .= messageType
+        , "channel" .= messageChannelID
+        , "text"    .= messageText
         ]

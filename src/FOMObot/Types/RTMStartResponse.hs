@@ -6,9 +6,9 @@ import Data.Aeson.Types (typeMismatch)
 import FOMObot.Types.Channel
 
 data RTMStartResponse = RTMStartResponse
-    { _url :: String
-    , _selfID :: String
-    , _channels :: [Channel]
+    { responseURL :: String
+    , responseSelfID :: String
+    , responseChannels :: [Channel]
     } deriving (Show)
 
 instance FromJSON RTMStartResponse where

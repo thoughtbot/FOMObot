@@ -6,7 +6,6 @@ web:
     HISTORY_SIZE: 10
     FOMO_DEBOUNCE: 20
     FOMO_THRESHOLD: 5
-  #stdin_open: true
-  tty: true
+  stdin_open: true
   volumes:
     - .:/app

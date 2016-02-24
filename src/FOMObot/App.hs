@@ -22,7 +22,6 @@ runApp :: Bot ()
 runApp = do
     message@Message{..} <- receiveMessage
     printBot message
-    updateState message
     alertFOMOChannel messageText
     state <- get
     printBot $ "state: " ++ (show state)
@@ -31,9 +30,10 @@ initApp :: IO ()
 initApp = do
     token <- T.pack <$> getEnv "SLACK_API_TOKEN"
     RTMStartResponse{..} <- rtmStartResponse token
-    longAlpha <- read <$> getEnv "LONG_ALPHA"
-    shortAlpha <- read <$> getEnv "SHORT_ALPHA"
-    let partialConfig = BotConfig (getFOMOChannelID responseChannels) responseSelfID longAlpha shortAlpha
+    historySize <- read <$> getEnv "HISTORY_SIZE"
+    debounce <- read <$> getEnv "FOMO_DEBOUNCE"
+    threshold <- read <$> getEnv "FOMO_THRESHOLD"
+    let partialConfig = BotConfig (getFOMOChannelID responseChannels) responseSelfID historySize debounce threshold
     let uri = fromJust $ parseURI responseURL
     runSecureClient uri partialConfig runApp
     where

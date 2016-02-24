@@ -3,11 +3,13 @@ module FOMObot.Types.Message where
 import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.:), (.=), Value(..), object)
 import Data.Aeson.Types (typeMismatch)
 
+import FOMObot.Types.TimeStamp
+
 data Message = Message
     { messageType :: String
     , messageChannelID :: String
     , messageUserID :: String
-    , messageTs :: String
+    , messageTs :: TimeStamp
     , messageText :: String
     } deriving (Show)
 

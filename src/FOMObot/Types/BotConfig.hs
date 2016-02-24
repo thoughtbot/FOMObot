@@ -7,7 +7,8 @@ type PartialConfig = WS.Connection -> BotConfig
 data BotConfig = BotConfig
     { configChannelID :: String
     , configBotID :: String
-    , configLongAlpha :: Double
-    , configShortAlpha :: Double
+    , configHistorySize :: Int
+    , configFOMODebounce :: Int
+    , configFOMOThreshold :: Double
     , configConnection :: WS.Connection
     }

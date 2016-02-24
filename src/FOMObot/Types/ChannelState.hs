@@ -1,10 +1,8 @@
 module FOMObot.Types.ChannelState where
 
-import Data.Time.Clock (NominalDiffTime)
+import FOMObot.Types.TimeStamp
 
 data ChannelState = ChannelState
-    { stateCount :: Int
-    , stateLongAvg :: NominalDiffTime
-    , stateShortAvg :: NominalDiffTime
-    , stateLastTimeStamp :: String
+    { stateHistory :: [TimeStamp]
+    , stateFOMOHistory :: [Bool]
     } deriving (Show)

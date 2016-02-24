@@ -7,5 +7,6 @@ web:
     FOMO_DEBOUNCE: 20
     FOMO_THRESHOLD: 5
   stdin_open: true
+  pid: "host"
   volumes:
     - .:/app

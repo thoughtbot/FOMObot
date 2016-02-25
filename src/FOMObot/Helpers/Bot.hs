@@ -24,9 +24,10 @@ receiveMessage = untilJust $ maybeFilter =<< decode <$> receiveData
         maybeFilter = maybe (return Nothing) filterMessage
 
 filterMessage :: Message -> Bot (Maybe Message)
-filterMessage m@Message{..} = ask >>= return . botMessageFilter
+filterMessage m@Message{messageType, messageChannelID, messageUserID} =
+    ask >>= return . botMessageFilter
     where
-        botMessageFilter BotConfig{..}
+        botMessageFilter BotConfig{configChannelID, configBotID}
             | messageType == "message" && messageChannelID /= configChannelID && messageUserID /= configBotID = Just m
             | otherwise = Nothing
 

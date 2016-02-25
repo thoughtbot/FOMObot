@@ -20,7 +20,7 @@ import FOMObot.Types.BotConfig
 
 runApp :: Bot ()
 runApp = do
-    message@Message{..} <- receiveMessage
+    message@Message{messageText} <- receiveMessage
     printBot message
     alertFOMOChannel messageText
     state <- get

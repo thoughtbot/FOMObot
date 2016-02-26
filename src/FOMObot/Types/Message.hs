@@ -9,7 +9,7 @@ data Message = Message
     { messageType :: String
     , messageChannelID :: String
     , messageUserID :: String
-    , messageTs :: TimeStamp
+    , messageTimestamp :: TimeStamp
     , messageText :: String
     } deriving (Show)
 

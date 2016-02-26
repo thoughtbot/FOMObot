@@ -4,5 +4,5 @@ import FOMObot.Types.TimeStamp
 
 data ChannelState = ChannelState
     { stateHistory :: [TimeStamp]
-    , stateFOMOHistory :: [Bool]
+    , stateEventHistory :: [Bool]
     } deriving (Show)

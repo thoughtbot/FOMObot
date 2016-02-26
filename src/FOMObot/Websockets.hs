@@ -7,7 +7,6 @@ import Network.URI (URI(..), uriRegName)
 import qualified Wuss
 import qualified Network.WebSockets as WS
 import qualified Data.Text as T
-import Data.HashMap (empty)
 
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
@@ -17,8 +16,7 @@ app partialConfig bot connection = do
     putStrLn "Connected!"
 
     let config = partialConfig connection
-    let initialState = empty
-    runBot initialState config bot
+    runBot emptyState config bot
 
     WS.sendClose connection $ T.pack "Bye!"
 

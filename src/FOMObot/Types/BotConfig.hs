@@ -8,7 +8,7 @@ data BotConfig = BotConfig
     { configChannelID :: String
     , configBotID :: String
     , configHistorySize :: Int
-    , configFOMODebounce :: Int
-    , configFOMOThreshold :: Double
+    , configDebounceSize :: Int
+    , configThreshold :: Double
     , configConnection :: WS.Connection
     }

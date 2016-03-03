@@ -1,0 +1,8 @@
+# For more information, see:
+# https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
+
+# Specifies the GHC version and set of packages available
+resolver: lts-5.5
+
+extra-deps:
+  - wuss-1.0.2

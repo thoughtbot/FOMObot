@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-docker-compose run web ./bin/build-slug
-./bin/upload-slug
+dir=$(dirname $BASH_SOURCE)
+source "$dir/docker-startup"
+
+heroku docker:release --remote production

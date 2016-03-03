@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ "$(uname)" = Darwin ]; then
-  docker-machine start dev
-  eval "$(docker-machine env dev)"
-fi
+set -e
 
-docker-compose run web cabal build
+dir=$(dirname $BASH_SOURCE)
+source "$dir/docker-startup"
+
+docker-compose run web stack build --allow-different-user

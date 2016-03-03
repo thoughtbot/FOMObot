@@ -20,4 +20,8 @@ if [ "$has_all_commands" = 0 ]; then
   exit 1
 fi
 
-./bin/run
+if ! heroku plugins | grep -Fq heroku-docker; then
+  heroku plugins:install heroku-docker
+fi
+
+heroku git:remote --remote production --app fomobot-production

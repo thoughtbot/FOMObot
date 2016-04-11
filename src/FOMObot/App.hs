@@ -3,37 +3,26 @@ module FOMObot.App
     ) where
 
 import System.Environment (getEnv)
-import Data.Maybe (fromJust)
-import Network.URI (parseURI)
-import Control.Monad (when)
-import qualified Data.Text as T
-import Data.List (find)
+import Control.Monad (void, when)
+import qualified Web.Slack as Slack
 
-import FOMObot.RTM (rtmStartResponse)
-import FOMObot.Websockets (runSecureClient)
 import FOMObot.Helpers.Bot
-import FOMObot.Types.RTMStartResponse
-import FOMObot.Types.Channel
-import FOMObot.Types.Message
+import FOMObot.Types.AppState
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
+import FOMObot.Types.BotState
 
-runApp :: Bot ()
-runApp = do
-    message@Message{messageChannelID} <- receiveMessage
-    fomo <- processMessage message
-    when fomo $ alertFOMOChannel messageChannelID
+runApp :: Slack.Event -> Bot ()
+runApp m@(Slack.Message cid (Slack.UserComment _) _ _ _ _) = do
+    ignoreFOMOChannel <- isFOMOChannel cid
+    if ignoreFOMOChannel
+       then return ()
+       else (`when` alertFOMOChannel cid) =<< processMessage m
+
+runApp _ = return ()
 
 initApp :: IO ()
 initApp = do
-    token <- T.pack <$> getEnv "SLACK_API_TOKEN"
-    RTMStartResponse{..} <- rtmStartResponse token
-    historySize <- read <$> getEnv "HISTORY_SIZE"
-    debounce <- read <$> getEnv "FOMO_DEBOUNCE"
-    threshold <- read <$> getEnv "FOMO_THRESHOLD"
-    let partialConfig = BotConfig (getFOMOChannelID responseChannels) responseSelfID historySize debounce threshold
-    let uri = fromJust $ parseURI responseURL
-    runSecureClient uri partialConfig runApp
-    where
-        getFOMOChannelID = channelID . fromJust . (find isFOMOChannel)
-        isFOMOChannel = (== "fomo") . channelName
+    token <- getEnv "SLACK_API_TOKEN"
+    config <- buildConfig
+    void $ Slack.runBot (Slack.SlackConfig token) runApp $ AppState config emptyState

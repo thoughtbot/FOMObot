@@ -1,14 +1,15 @@
 module FOMObot.Types.BotConfig where
 
-import qualified Network.WebSockets as WS
-
-type PartialConfig = WS.Connection -> BotConfig
+import System.Environment (getEnv)
 
 data BotConfig = BotConfig
-    { configChannelID :: String
-    , configBotID :: String
-    , configHistorySize :: Int
+    { configHistorySize :: Int
     , configDebounceSize :: Int
     , configThreshold :: Double
-    , configConnection :: WS.Connection
     }
+
+buildConfig :: IO BotConfig
+buildConfig = BotConfig
+    <$> (read <$> getEnv "HISTORY_SIZE")
+    <*> (read <$> getEnv "FOMO_DEBOUNCE")
+    <*> (read <$> getEnv "FOMO_THRESHOLD")

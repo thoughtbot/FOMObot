@@ -1,43 +1,36 @@
 module FOMObot.Helpers.Bot
-    ( receiveMessage
+    ( isFOMOChannel
     , processMessage
-    , printBot
-    , sendMessage
     , alertFOMOChannel
     ) where
 
-import Control.Monad.Trans (liftIO)
-import Control.Monad.Reader (ask)
-import Control.Monad.Loops (untilJust)
-import Data.Aeson (decode, encode)
+import Control.Lens (uses, views, view, (^.))
+import Data.List (find)
+import Data.Maybe (fromJust)
 import Data.Monoid ((<>))
-import Data.Time (getCurrentTime)
-import qualified Network.WebSockets as WS
+import qualified Data.Text as T
+import qualified Web.Slack as Slack
+import qualified Web.Slack.Message as Slack
 
 import FOMObot.Helpers.Algorithm
-import FOMObot.Types.Message
 import FOMObot.Types.Bot
-import FOMObot.Types.BotConfig
 import FOMObot.Types.ChannelState
-import FOMObot.Types.TimeStamp
 
-receiveMessage :: Bot Message
-receiveMessage = untilJust $ maybeFilter =<< decode <$> receiveData
-    where
-        receiveData = liftIO . WS.receiveData =<< botConnection
-        maybeFilter = maybe (return Nothing) filterMessage
+isFOMOChannel :: Slack.ChannelId -> Bot Bool
+isFOMOChannel cid = views Slack.channelId (== cid) <$> getFOMOChannel
 
-filterMessage :: Message -> Bot (Maybe Message)
-filterMessage m@Message{messageType, messageChannelID, messageUserID} =
-    ask >>= return . botMessageFilter
-    where
-        botMessageFilter BotConfig{configChannelID, configBotID}
-            | messageType == "message" && messageChannelID /= configChannelID && messageUserID /= configBotID = Just m
-            | otherwise = Nothing
+getFOMOChannel :: Bot Slack.Channel
+getFOMOChannel = do
+    channels <- uses Slack.session $ view Slack.slackChannels
+    return $ fromJust $ channelFinder channels
+  where
+    channelFinder = find (views Slack.channelName (== "fomo"))
 
-processMessage :: Message -> Bot Bool
-processMessage Message{messageChannelID, messageTimestamp} = do
-    config <- ask
+processMessage :: Slack.Event -> Bot Bool
+processMessage (Slack.Message channelID _ _ messageTimestamp _ _) = do
+    config <- getConfig
+    let messageChannelID = T.unpack $ channelID ^. Slack.getId
+
     -- Add the message timestamp to the channel state
     channelState <- shiftInTime config messageTimestamp
         <$> botChannelState messageChannelID
@@ -55,13 +48,11 @@ processMessage Message{messageChannelID, messageTimestamp} = do
     let recentlyNotified = or $ stateEventHistory channelState
     return $ eventOccurred && not recentlyNotified
 
-sendMessage :: String -> String -> Bot ()
-sendMessage message channel = liftIO =<< WS.sendTextData <$> botConnection <*> (responseData <$> currentTimeStamp)
-    where
-        responseData now = encode $ Message "message" channel "" now message
-        currentTimeStamp = TimeStamp <$> liftIO getCurrentTime
+processMessage _ = return False
 
-alertFOMOChannel :: String -> Bot ()
-alertFOMOChannel messageChannelID = sendMessage message =<< configChannelID <$> ask
-    where
-        message = "Check out <#" <> messageChannelID <> ">"
+alertFOMOChannel :: Slack.ChannelId -> Bot ()
+alertFOMOChannel channelID = do
+    fomoChannel <- view Slack.channelId <$> getFOMOChannel
+    Slack.sendMessage fomoChannel message
+  where
+    message = "Check out <#" <> (channelID ^. Slack.getId) <> ">"

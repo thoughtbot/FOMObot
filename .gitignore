@@ -3,3 +3,4 @@ slug.tgz
 .cabal-sandbox/
 cabal.sandbox.config
 .stack-work/
+.env

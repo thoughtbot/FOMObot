@@ -1,8 +1,8 @@
 module FOMObot.Types.ChannelState where
 
-import FOMObot.Types.TimeStamp
+import qualified Web.Slack as Slack
 
 data ChannelState = ChannelState
-    { stateHistory :: [TimeStamp]
+    { stateHistory :: [Slack.SlackTimeStamp]
     , stateEventHistory :: [Bool]
     } deriving (Show)

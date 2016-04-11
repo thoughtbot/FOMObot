@@ -5,32 +5,31 @@ module FOMObot.Helpers.Algorithm
     , detectFOMOEvent
     ) where
 
-import Control.Monad.Reader (ask)
-import Data.Time.Clock (diffUTCTime)
+import Control.Lens ((^.))
+import qualified Web.Slack as Slack
 
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
 import FOMObot.Types.ChannelState
-import FOMObot.Types.TimeStamp
 
 type Density = Double
 
 calcDensity :: ChannelState -> Bot Density
 calcDensity ChannelState{stateHistory} = do
-    BotConfig{configHistorySize} <- ask
+    BotConfig{configHistorySize} <- getConfig
     return $ if isArrayFull stateHistory configHistorySize
         then calc $ fromIntegral configHistorySize
         else 0
-    where
-        calc historySize = 60 * historySize / timeOverHistory
-        timeOverHistory = realToFrac $ diffUTCTime (utc $ head stateHistory) (utc $ last stateHistory)
+  where
+    calc historySize = 59 * historySize / timeOverHistory
+    timeOverHistory = realToFrac $ (head stateHistory ^. Slack.slackTime) - (last stateHistory ^. Slack.slackTime)
 
 detectFOMOEvent :: Density -> Bot Bool
 detectFOMOEvent density = do
-    BotConfig{configThreshold} <- ask
+    BotConfig{configThreshold} <- getConfig
     return $ density > configThreshold
 
-shiftInTime :: BotConfig -> TimeStamp -> ChannelState -> ChannelState
+shiftInTime :: BotConfig -> Slack.SlackTimeStamp -> ChannelState -> ChannelState
 shiftInTime BotConfig{configHistorySize} timestamp s@ChannelState{stateHistory} =
     s { stateHistory = shiftIn configHistorySize stateHistory timestamp }
 

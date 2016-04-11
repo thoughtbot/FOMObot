@@ -21,7 +21,7 @@ calcDensity ChannelState{stateHistory} = do
         then calc $ fromIntegral configHistorySize
         else 0
   where
-    calc historySize = 59 * historySize / timeOverHistory
+    calc historySize = 60 * historySize / timeOverHistory
     timeOverHistory = realToFrac $ (head stateHistory ^. Slack.slackTime) - (last stateHistory ^. Slack.slackTime)
 
 detectFOMOEvent :: Density -> Bot Bool

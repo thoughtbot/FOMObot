@@ -1,27 +1,9 @@
 #!/bin/sh
 
-has_all_commands=1
+set -e
 
-if [ "$(uname)" = Darwin ]; then
-  # OSX
-  commands="docker docker-compose docker-machine"
-else
-  commands="docker docker-compose"
-fi
+# Create environment file if it doesn't exist
+[ -f .env ] || cp env .env
 
-for command in $commands; do
-  if ! command -v "$command" > /dev/null; then
-    printf "Please install %s (brew install %s)\n" "$command" "$command"
-    has_all_commands=0
-  fi
-done
-
-if [ "$has_all_commands" = 0 ]; then
-  exit 1
-fi
-
-if ! heroku plugins | grep -Fq heroku-docker; then
-  heroku plugins:install heroku-docker
-fi
-
-heroku git:remote --remote production --app fomobot-production
+stack setup
+stack build --dependencies-only

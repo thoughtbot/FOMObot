@@ -1,0 +1,9 @@
+*
+
+!stack-bootstrap
+!stack.yaml
+!fomobot.cabal
+
+!Setup.hs
+!src
+!LICENSE

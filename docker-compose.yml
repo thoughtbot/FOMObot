@@ -1,13 +1,2 @@
 web:
   build: .
-  command: stack exec fomobot --allow-different-user
-  working_dir: /app/user
-  environment:
-    SLACK_API_TOKEN: "xoxb-4375956194-kvlljrTk9LWIi5RxhqfrScu4"
-    HISTORY_SIZE: 10
-    FOMO_DEBOUNCE: 20
-    FOMO_THRESHOLD: 5
-  stdin_open: true
-  pid: "host"
-  volumes:
-    - .:/app/user

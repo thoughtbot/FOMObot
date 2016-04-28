@@ -1,83 +1,73 @@
 # FOMObot
 
-A slack bot that monitors channels for message activity spikes. When activity
-spikes within a channel, FOMObot posts a message to the fomo channel to let
-anyone in that channel know that they could be missing out on good conversation.
+A Slack bot that monitors channels for message activity spikes. When activity
+spikes within a channel, FOMObot posts a message to the `#fomo` channel to let
+anyone in that channel know that they could be missing out on an important
+conversation.
 
 ## Development Environment Setup
 
-This project uses [Docker]. You can use [Homebrew] to install Docker and its
-other cli tools.
+This project uses [Stack] to build and run locally. You can install Stack via
+the [instructions on their site.](http://docs.haskellstack.org/en/stable/README/)
 
-[Docker]: https://docker.com
-[Homebrew]: http://brew.sh
+[Stack]: http://docs.haskellstack.org/en/stable/README/
 
-Run:
+Then run:
 
 ```
-./bin/setup
+bin/setup
 ```
 
-Optionally, you can install docker, docker-compose, and docker-machine (OSX), etc via the [instructions] on their website.
+FOMObot needs a Slack API token. You can create a new Slack bot and
+generate an API token [here](https://my.slack.com/services/new/bot).
 
-[instructions]: https://docs.docker.com/engine/installation
+Insert the Slack API token into the `.env` file.
 
-Also, Docker uses [VirtualBox] so you'll need that too.
-
-[VirtualBox]: https://www.virtualbox.org/wiki/Downloads
-
-Now, Make sure to [setup Docker Machine] properly if it's your first time using
-it.
-
-[setup Docker Machine]: https://docs.docker.com/machine/get-started
-
-If you plan to update the dependencies of the project within the `fomobot.cabal`
-file, then you'll also need a [Docker Hub] account and be added to the
-[thoughtbot organization].
-
-[Docker Hub]: https://hub.docker.com
-[thoughtbot organization]: https://hub.docker.com/u/thoughtbot/
-
-Run `docker login` to login to Docker using your Docker Hub creds.
+```
+SLACK_API_TOKEN=your_token_goes_here
+...
+```
 
 ## Running Locally
 
 Run this:
 
 ```
-./bin/run
+bin/run
 ```
-
-## Updating the Dependencies
-
-If you update the `fomobot.cabal` file. Build and push the new Docker container
-to Docker Hub using the `bin/update-image` script. This script will rebuild the
-docker container with the new cabal file, tag it with the `latest` tag, then
-push it up to Docker Hub where other developers can take advantage of the
-pre-installed dependencies.
 
 ## Deployment Environment Setup
 
-This project deploys to [Heroku]. If you want to be able to deploy this project,
-first install the Heroku Toolbelt. We also use the `jq` library for parsing JSON
-in shell. Via Homebrew run:
+This project uses [Docker] to build for deployment. You can install docker and
+docker-compose via the [instructions] on their website.
+
+[Docker]: https://docker.com
+[instructions]: https://docs.docker.com/engine/installation
+
+If you're using OS X, you will also need docker-machine. Make sure to [setup
+Docker Machine] properly if it's your first time using it.
+
+[setup Docker Machine]: https://docs.docker.com/machine/get-started
+
+FOMObot can be easily deployed to [Heroku]. If you would also like to deploy to
+Heroku then start by creating a Heroku account if you don't already have one.
+Next, install the [Heroku Toolbelt].
 
 [Heroku]: https://www.heroku.com/
 [Heroku Toolbelt]: https://toolbelt.heroku.com/
 
-```
-brew update
-brew install heroku-toolbelt jq
-```
+Log in to Heroku by running `heroku login`.
 
-Create a Heroku account if you don't already have one. Request to be invited to
-the `fomobot-production` app.
+Create a new app for this project by running `heroku apps:create YOUR_APP_NAME`.
 
-Finally, login to Heroku by running `heroku login`.
+Set the same environment variables in your Heroku app as you have in `.env`.
+
+Finally, install the `heroku-docker` plugin.
+
+```
+heroku plugins:install heroku-docker
+```
 
 ## Deploying to Heroku
 
-Simply run `bin/deploy`. This will clean and build the cabal executable, build a
-docker slug, release the slug to the Heroku app.
-
-You can monitor the logs by running `heroku logs --app fomobot-production`.
+Simply run `heroku docker:release`.

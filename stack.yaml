@@ -7,7 +7,6 @@ resolver: lts-5.11
 extra-deps:
   - slack-api-0.7
 
-docker:
-  enable: true
-  run-args:
-    - "--env-file=.env"
+# Extra directories used by stack for building
+extra-include-dirs: [/usr/local/opt/openssl/include]
+extra-lib-dirs: [/usr/local/opt/openssl/lib]

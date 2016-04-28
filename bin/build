@@ -1,8 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
-dir=$(dirname $BASH_SOURCE)
-source "$dir/docker-startup"
-
-docker-compose run web stack build --allow-different-user
+stack build

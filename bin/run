@@ -2,7 +2,8 @@
 
 set -e
 
-dir=$(dirname $BASH_SOURCE)
-source "$dir/docker-startup"
+set -o allexport
+source .env
+set +o allexport
 
-docker-compose up
+stack exec fomobot

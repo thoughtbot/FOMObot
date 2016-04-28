@@ -1,8 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
-dir=$(dirname $BASH_SOURCE)
-source "$dir/docker-startup"
-
-heroku docker:release --remote production
+heroku docker:release

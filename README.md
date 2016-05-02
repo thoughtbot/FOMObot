@@ -71,3 +71,31 @@ heroku plugins:install heroku-docker
 ## Deploying to Heroku
 
 Simply run `heroku docker:release`.
+
+## Contributing
+
+See the [CONTRIBUTING] document. Thank you, [contributors]!
+
+[CONTRIBUTING]: CONTRIBUTING.md
+[contributors]: https://github.com/thoughtbot/FOMObot/graphs/contributors
+
+## License
+
+FOMObot is Copyright (c) 2016 thoughtbot, inc. It is free software, and may be
+redistributed under the terms specified in the [LICENSE] file.
+
+[LICENSE]: /LICENSE
+
+## About
+
+![thoughtbot](https://thoughtbot.com/logo.png)
+
+FOMObot is maintained and funded by thoughtbot, inc. The names and logos for
+thoughtbot are trademarks of thoughtbot, inc.
+
+We love open source software! See [our other projects][community] or look at
+our product [case studies] and [hire us][hire] to help build your Haskell app.
+
+[community]: https://thoughtbot.com/community?utm_source=github
+[case studies]: https://thoughtbot.com/work?utm_source=github
+[hire]: https://thoughtbot.com/hire-us?utm_source=github

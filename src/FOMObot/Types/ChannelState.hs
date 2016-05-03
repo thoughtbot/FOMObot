@@ -1,8 +1,11 @@
 module FOMObot.Types.ChannelState where
 
-import qualified Web.Slack as Slack
+import Control.Lens (makeLenses)
+import FOMObot.Types.HistoryItem
 
 data ChannelState = ChannelState
-    { stateHistory :: [Slack.SlackTimeStamp]
-    , stateEventHistory :: [Bool]
+    { _stateHistory :: [HistoryItem]
+    , _stateEventHistory :: [Bool]
     } deriving (Show)
+
+makeLenses ''ChannelState

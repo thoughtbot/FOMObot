@@ -15,6 +15,7 @@ import qualified Web.Slack.Message as Slack
 import FOMObot.Helpers.Algorithm
 import FOMObot.Types.Bot
 import FOMObot.Types.ChannelState
+import FOMObot.Types.HistoryItem
 
 isFOMOChannel :: Slack.ChannelId -> Bot Bool
 isFOMOChannel cid = views Slack.channelId (== cid) <$> getFOMOChannel
@@ -27,12 +28,13 @@ getFOMOChannel = do
     channelFinder = find (views Slack.channelName (== "fomo"))
 
 processMessage :: Slack.Event -> Bot Bool
-processMessage (Slack.Message channelID _ _ messageTimestamp _ _) = do
+processMessage (Slack.Message channelID (Slack.UserComment userID) _ messageTimestamp _ _) = do
     config <- getConfig
     let messageChannelID = T.unpack $ channelID ^. Slack.getId
 
     -- Add the message timestamp to the channel state
-    channelState <- shiftInTime config messageTimestamp
+    let historyItem = HistoryItem messageTimestamp userID
+    channelState <- shiftInHistory config historyItem
         <$> botChannelState messageChannelID
 
     -- Calculate the density over the timestamps within channel state
@@ -45,7 +47,7 @@ processMessage (Slack.Message channelID _ _ messageTimestamp _ _) = do
         $ shiftInEvent config eventOccurred channelState
 
     -- Signal an event only if an event occured and no recent events
-    let recentlyNotified = or $ stateEventHistory channelState
+    let recentlyNotified = views stateEventHistory or channelState
     return $ eventOccurred && not recentlyNotified
 
 processMessage _ = return False

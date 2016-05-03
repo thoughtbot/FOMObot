@@ -37,10 +37,8 @@ processMessage (Slack.Message channelID (Slack.UserComment userID) _ messageTime
     channelState <- shiftInHistory config historyItem
         <$> botChannelState messageChannelID
 
-    -- Calculate the density over the timestamps within channel state
-    density <- calcDensity channelState
     -- Detect an event that surpasses the threshold
-    eventOccurred <- detectFOMOEvent density
+    eventOccurred <- detectFOMOEvent channelState
 
     -- Save the channel state after adding the event status
     botSaveState messageChannelID

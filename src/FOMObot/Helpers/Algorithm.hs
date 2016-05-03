@@ -1,11 +1,11 @@
 module FOMObot.Helpers.Algorithm
     ( shiftInHistory
     , shiftInEvent
-    , calcDensity
     , detectFOMOEvent
     ) where
 
-import Control.Lens ((^.), (^?), (^?!), (&), (.~), (%~), _head, _last)
+import Control.Lens ((^.), (^?), (^?!), (&), (.~), (%~), _head, _last, views)
+import Data.List (nub)
 import qualified Web.Slack as Slack
 
 import FOMObot.Types.Bot
@@ -27,10 +27,15 @@ calcDensity s = do
     latestTimeStamp = s ^?! stateHistory . _head . historyTimeStamp . Slack.slackTime
     earliestTimeStamp  = s ^?! stateHistory . _last . historyTimeStamp . Slack.slackTime
 
-detectFOMOEvent :: Density -> Bot Bool
-detectFOMOEvent density = do
-    BotConfig{configThreshold} <- getConfig
-    return $ density > configThreshold
+detectFOMOEvent :: ChannelState -> Bot Bool
+detectFOMOEvent state = do
+    densitySurpassesThreshold <- (>) <$> calcDensity state <*> (configThreshold <$> getConfig)
+    return $ and
+        [ densitySurpassesThreshold
+        , atLeastThreeUniqueUsers
+        ]
+  where
+    atLeastThreeUniqueUsers = views stateHistory ((>=3) . length . nub . (map (^. historyUserId))) state
 
 shiftInHistory :: BotConfig -> HistoryItem -> ChannelState -> ChannelState
 shiftInHistory BotConfig{configHistorySize} historyItem s =

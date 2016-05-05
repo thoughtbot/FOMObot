@@ -6,11 +6,10 @@ resolver: lts-5.11
 
 packages:
   - '.'
-  - '/Users/tony/dev/open-source/hedis'
 
 extra-deps:
   - slack-api-0.7
-  - hedis-0.8.1
+  - hedis-0.8.3
   - scanner-0.2
 
 # Extra directories used by stack for building

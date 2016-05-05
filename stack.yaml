@@ -4,8 +4,14 @@
 # Specifies the GHC version and set of packages available
 resolver: lts-5.11
 
+packages:
+  - '.'
+  - '/Users/tony/dev/open-source/hedis'
+
 extra-deps:
   - slack-api-0.7
+  - hedis-0.8.1
+  - scanner-0.2
 
 # Extra directories used by stack for building
 extra-include-dirs: [/usr/local/opt/openssl/include]

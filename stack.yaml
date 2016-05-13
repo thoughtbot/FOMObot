@@ -8,7 +8,7 @@ packages:
   - '.'
 
 extra-deps:
-  - slack-api-0.7
+  - slack-api-0.8
   - hedis-0.8.3
   - scanner-0.2
 

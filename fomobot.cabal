@@ -22,6 +22,7 @@ executable fomobot
                        FOMObot.Helpers.Algorithm
                        FOMObot.Helpers.CommandProcessor
                        FOMObot.Helpers.DMChannel
+                       FOMObot.Helpers.FOMOChannel
                        FOMObot.Helpers.MessageProcessor
                        FOMObot.Helpers.Preferences
                        FOMObot.Types.AppState
@@ -29,6 +30,7 @@ executable fomobot
                        FOMObot.Types.BotConfig
                        FOMObot.Types.BotState
                        FOMObot.Types.ChannelState
+                       FOMObot.Types.Command
                        FOMObot.Types.HistoryItem
 
   default-extensions:  OverloadedStrings

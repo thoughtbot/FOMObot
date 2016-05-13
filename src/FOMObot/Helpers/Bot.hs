@@ -19,7 +19,7 @@ import qualified Web.Slack as Slack
 import qualified Web.Slack.Message as Slack
 
 import FOMObot.Helpers.Algorithm
-import FOMObot.Helpers.Redis
+import FOMObot.Helpers.Preferences
 import FOMObot.Types.Bot
 import FOMObot.Types.ChannelState
 import FOMObot.Types.HistoryItem

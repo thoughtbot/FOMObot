@@ -21,7 +21,8 @@ executable fomobot
   other-modules:       FOMObot.App
                        FOMObot.Helpers.Algorithm
                        FOMObot.Helpers.Bot
-                       FOMObot.Helpers.Redis
+                       FOMObot.Helpers.DMChannel
+                       FOMObot.Helpers.Preferences
                        FOMObot.Types.AppState
                        FOMObot.Types.Bot
                        FOMObot.Types.BotConfig

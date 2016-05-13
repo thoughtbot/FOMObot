@@ -8,7 +8,7 @@ import Control.Monad (void, when, unless)
 import qualified Web.Slack as Slack
 
 import FOMObot.Helpers.Bot
-import FOMObot.Helpers.Redis
+import FOMObot.Helpers.DMChannel
 import FOMObot.Types.AppState
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig

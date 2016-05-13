@@ -7,8 +7,10 @@ import Control.Lens (uses, views, (^.))
 import Control.Monad (void, when)
 import qualified Web.Slack as Slack
 
-import FOMObot.Helpers.Bot
+import FOMObot.Helpers.CommandProcessor
 import FOMObot.Helpers.DMChannel
+import FOMObot.Helpers.FOMOChannel
+import FOMObot.Helpers.MessageProcessor
 import FOMObot.Types.AppState
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig

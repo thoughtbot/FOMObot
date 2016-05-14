@@ -2,6 +2,7 @@ module FOMObot.App
     ( initApp
     ) where
 
+import qualified Data.Text as T
 import System.Environment (getEnv)
 import Control.Lens (uses, views, (^.))
 import Control.Monad (void, when)
@@ -11,6 +12,7 @@ import FOMObot.Helpers.CommandProcessor
 import FOMObot.Helpers.DMChannel
 import FOMObot.Helpers.FOMOChannel
 import FOMObot.Helpers.MessageProcessor
+import FOMObot.Helpers.Preferences
 import FOMObot.Types.AppState
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig
@@ -21,10 +23,15 @@ runApp m@(Slack.Message cid (Slack.UserComment uid) _ _ _ _) = do
     ignoreFOMOChannel <- isFOMOChannel cid
     isDM <- isDMChannel uid cid
 
-    case (ignoreFOMOChannel, isDM) of
-      (True, _) -> return ()
-      (_, True) -> processCommand m
-      (_, False) -> (`when` alertFOMOChannel cid) =<< processMessage m
+    case () of
+      _ | ignoreFOMOChannel -> return ()
+        | isDM -> processCommand m
+        | otherwise -> do
+            eventOccured <- processMessage m
+            when eventOccured $ do
+                alertFOMOChannel cid
+                users <- getUsersForChannel $ T.unpack $ cid ^. Slack.getId
+                alertUsers users cid
 
 runApp (Slack.ImCreated uid (Slack.IM cid _ _ _ _ _)) = setDMChannel uid cid
 

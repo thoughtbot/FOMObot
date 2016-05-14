@@ -1,15 +1,18 @@
 module FOMObot.Helpers.FOMOChannel
     ( isFOMOChannel
     , alertFOMOChannel
+    , alertUsers
     ) where
 
-import Control.Lens (uses, views, view, (^.))
+import Control.Lens (uses, views, view, (^.), review)
 import Data.List (find)
 import Data.Maybe (fromJust)
 import Data.Monoid ((<>))
+import qualified Data.Text as T
 import qualified Web.Slack as Slack
 import qualified Web.Slack.Message as Slack
 
+import FOMObot.Helpers.DMChannel (getDMChannel)
 import FOMObot.Types.Bot
 
 isFOMOChannel :: Slack.ChannelId -> Bot Bool
@@ -28,3 +31,11 @@ alertFOMOChannel channelID = do
     Slack.sendMessage fomoChannel message
   where
     message = "Check out <#" <> (channelID ^. Slack.getId) <> ">"
+
+alertUsers :: [String] -> Slack.ChannelId -> Bot ()
+alertUsers uids cid = mapM_ (\uid -> do
+    channel <- getDMChannel uid
+    let channelId = (review Slack.getId) . T.pack <$> channel
+    maybe (return ()) (`Slack.sendMessage` message) channelId) uids
+  where
+    message = "Check out <#" <> (cid ^. Slack.getId) <> ">"

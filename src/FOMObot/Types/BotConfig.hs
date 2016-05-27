@@ -1,9 +1,17 @@
 module FOMObot.Types.BotConfig where
 
-import Control.Exception (try, IOException)
-import Data.ByteString.Char8 (pack)
-import Database.Redis (ConnectInfo(ConnInfo), PortID(PortNumber))
+import Data.ByteString.Char8 (pack, unpack)
+import Database.Redis (ConnectInfo(..), PortID(PortNumber), defaultConnectInfo)
 import System.Environment (getEnv)
+import URI.ByteString
+    ( Authority(..)
+    , Host(..)
+    , Port(..)
+    , URI(..)
+    , UserInfo(..)
+    , parseURI
+    , strictURIParserOptions
+    )
 
 data BotConfig = BotConfig
     { configHistorySize :: Int
@@ -17,11 +25,17 @@ buildConfig = BotConfig
     <$> (read <$> getEnv "HISTORY_SIZE")
     <*> (read <$> getEnv "FOMO_DEBOUNCE")
     <*> (read <$> getEnv "FOMO_THRESHOLD")
-    <*> (ConnInfo
-            <$> getEnv "REDIS_HOST"
-            <*> (PortNumber . fromInteger . read <$> getEnv "REDIS_PORT")
-            <*> (either (const Nothing) (Just . pack)
-                <$> (try $ getEnv "REDIS_PASS" :: IO (Either IOException String)))
-            <*> (read <$> getEnv "REDIS_DATABASE")
-            <*> return 10
-            <*> return 30)
+    <*> (parseRedisURL <$> getEnv "REDIS_URL")
+
+parseRedisURL :: String -> ConnectInfo
+parseRedisURL url = defaultConnectInfo
+    { connectAuth = uiPassword <$> (authorityUserInfo =<< mauth)
+    , connectHost = host
+    , connectPort = port
+    }
+  where
+    parseURI' = either (const Nothing) Just . parseURI strictURIParserOptions 
+    muri = parseURI' $ pack url
+    mauth = uriAuthority =<< muri
+    host = maybe (connectHost defaultConnectInfo) (unpack . hostBS) $ authorityHost <$> mauth
+    port = maybe (connectPort defaultConnectInfo) (PortNumber . fromIntegral . portNumber) $ authorityPort =<< mauth

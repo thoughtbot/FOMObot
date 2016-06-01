@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 module FOMObot.Types.MessageDSL
     ( MessageDSL(..)
     , Density
@@ -20,12 +21,7 @@ data MessageDSL a = ShiftInHistory HistoryItem a
                   | ShiftInEvent EventStatus a
                   | CalcDensity (Density -> a)
                   | DetectEvent Density (EventStatus -> a)
-
-instance Functor MessageDSL where
-    fmap f (ShiftInHistory h a) = ShiftInHistory h (f a)
-    fmap f (ShiftInEvent e a)   = ShiftInEvent e (f a)
-    fmap f (CalcDensity g)      = CalcDensity (f . g)
-    fmap f (DetectEvent d g)    = DetectEvent d (f . g)
+                  deriving Functor
 
 shiftInHistory :: HistoryItem -> Free MessageDSL ()
 shiftInHistory h = liftFree $ ShiftInHistory h ()

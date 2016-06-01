@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveFunctor #-}
 module FOMObot.Types.DSL
     ( DSL(..)
     , processCommandF
@@ -24,15 +25,7 @@ data DSL a = ProcessCommand Slack.Event a
            | GetEventStatus Slack.ChannelId (EventStatus -> a)
            | Alert Slack.ChannelId a
            | End
-
-instance Functor DSL where
-    fmap f (ProcessCommand m a)     = ProcessCommand m (f a)
-    fmap f (GetBotConfig g)         = GetBotConfig (f . g)
-    fmap f (GetChannelState c g)    = GetChannelState c (f . g)
-    fmap f (SaveChannelState c s a) = SaveChannelState c s (f a)
-    fmap f (GetEventStatus c g)     = GetEventStatus c (f . g)
-    fmap f (Alert c a)              = Alert c (f a)
-    fmap _ End                      = End
+           deriving Functor
 
 processCommandF :: Slack.Event -> Free DSL ()
 processCommandF m = liftFree $ ProcessCommand m ()

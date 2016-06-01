@@ -2,34 +2,25 @@ module FOMObot.Helpers.MessageProcessor
     ( processMessage
     ) where
 
-import Control.Lens (views, (^.))
-import qualified Data.Text as T
 import qualified Web.Slack as Slack
+import Control.Monad.Free (Free)
+import Control.Monad.State (runStateT)
+import Control.Monad.Reader (runReaderT)
 
-import FOMObot.Helpers.Algorithm
-import FOMObot.Types.Bot
-import FOMObot.Types.ChannelState
+import FOMObot.Types.DSL
+import FOMObot.Types.MessageDSL
 import FOMObot.Types.HistoryItem
 
-processMessage :: Slack.Event -> Bot Bool
-processMessage (Slack.Message channelID (Slack.UserComment userID) _ messageTimestamp _ _) = do
-    config <- getConfig
-    let messageChannelID = T.unpack $ channelID ^. Slack.getId
+processMessage :: Slack.Event -> Free DSL ()
+processMessage (Slack.Message cid (Slack.UserComment userId) _ timestamp _ _) = do
+    config <- getBotConfig
+    channelState <- getChannelState cid
+    let historyItem = HistoryItem timestamp userId
+    (_, newState) <- runStateT (runReaderT (runMessageDSL $ do
+        shiftInHistory historyItem
+        event <- detectEvent =<< calcDensity
+        shiftInEvent event
+        return event) config) channelState
+    saveChannelState cid newState
 
-    -- Add the message timestamp to the channel state
-    let historyItem = HistoryItem messageTimestamp userID
-    channelState <- shiftInHistory config historyItem
-        <$> botChannelState messageChannelID
-
-    -- Detect an event that surpasses the threshold
-    eventOccurred <- detectFOMOEvent channelState
-
-    -- Save the channel state after adding the event status
-    botSaveState messageChannelID
-        $ shiftInEvent config eventOccurred channelState
-
-    -- Signal an event only if an event occured and no recent events
-    let recentlyNotified = views stateEventHistory or channelState
-    return $ eventOccurred && not recentlyNotified
-
-processMessage _ = return False
+processMessage _ = return ()

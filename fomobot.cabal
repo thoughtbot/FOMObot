@@ -23,6 +23,7 @@ executable fomobot
                        FOMObot.Helpers.CommandProcessor
                        FOMObot.Helpers.DMChannel
                        FOMObot.Helpers.FOMOChannel
+                       FOMObot.Helpers.Free
                        FOMObot.Helpers.MessageProcessor
                        FOMObot.Helpers.Preferences
                        FOMObot.Types.AppState
@@ -32,6 +33,8 @@ executable fomobot
                        FOMObot.Types.ChannelState
                        FOMObot.Types.Command
                        FOMObot.Types.HistoryItem
+                       FOMObot.Types.DSL
+                       FOMObot.Types.MessageDSL
 
   default-extensions:  OverloadedStrings
                      , NamedFieldPuns
@@ -47,6 +50,8 @@ executable fomobot
                      , transformers
                      , parsec
                      , uri-bytestring
+                     , free
+                     , mtl
 
   hs-source-dirs:      src
   default-language:    Haskell2010

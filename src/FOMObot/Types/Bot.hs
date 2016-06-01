@@ -2,11 +2,17 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module FOMObot.Types.Bot where
+module FOMObot.Types.Bot
+    ( Bot()
+    , getConfig
+    , botChannelState
+    , botSaveState
+    ) where
 
-import Control.Lens (view, uses, modifying, set)
+import Control.Lens (view, uses, modifying, set, (^.))
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.HashMap as HM
+import qualified Data.Text as T
 import Database.Redis (MonadRedis(..), runRedis, connect)
 import qualified Web.Slack as Slack
 
@@ -34,16 +40,20 @@ modifyState f = do
     state <- getState
     modifying Slack.userState $ set botState $ f state
 
-botChannelState :: String -> Bot ChannelState
-botChannelState channelID = do
-    mChannelState <- HM.lookup channelID <$> getState
-    maybe (botInsert channelID) return mChannelState
+botChannelState :: Slack.ChannelId -> Bot ChannelState
+botChannelState cid = do
+    mChannelState <- HM.lookup channelId <$> getState
+    maybe (botInsert cid) return mChannelState
+  where
+    channelId = T.unpack $ cid ^. Slack.getId
 
-botInsert :: String -> Bot ChannelState
-botInsert channelID = do
+botInsert :: Slack.ChannelId -> Bot ChannelState
+botInsert cid = do
     let newChannelState = ChannelState [] []
-    botSaveState channelID newChannelState
+    botSaveState cid newChannelState
     return newChannelState
 
-botSaveState :: String -> ChannelState -> Bot ()
-botSaveState channelID = modifyState . (HM.insert channelID)
+botSaveState :: Slack.ChannelId -> ChannelState -> Bot ()
+botSaveState cid = modifyState . (HM.insert channelId)
+  where
+    channelId = T.unpack $ cid ^. Slack.getId

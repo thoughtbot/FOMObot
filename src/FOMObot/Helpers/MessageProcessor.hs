@@ -7,6 +7,7 @@ import Control.Monad.Free (Free)
 import Control.Monad.State (runStateT)
 import Control.Monad.Reader (runReaderT)
 
+import FOMObot.Interpretors.MessageDSL
 import FOMObot.Types.DSL
 import FOMObot.Types.MessageDSL
 import FOMObot.Types.HistoryItem

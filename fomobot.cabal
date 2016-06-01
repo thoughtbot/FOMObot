@@ -25,6 +25,7 @@ executable fomobot
                        FOMObot.Helpers.Free
                        FOMObot.Helpers.MessageProcessor
                        FOMObot.Helpers.Preferences
+                       FOMObot.Interpretors.MessageDSL
                        FOMObot.Types.AppState
                        FOMObot.Types.Bot
                        FOMObot.Types.BotConfig

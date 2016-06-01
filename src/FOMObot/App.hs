@@ -10,6 +10,7 @@ import qualified Web.Slack as Slack
 import FOMObot.Helpers.DMChannel
 import FOMObot.Helpers.FOMOChannel
 import FOMObot.Helpers.MessageProcessor
+import FOMObot.Interpretors.DSL
 import FOMObot.Types.AppState
 import FOMObot.Types.Bot
 import FOMObot.Types.BotConfig

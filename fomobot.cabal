@@ -19,7 +19,6 @@ cabal-version:       >=1.10
 executable fomobot
   main-is:             Main.hs
   other-modules:       FOMObot.App
-                       FOMObot.Helpers.Algorithm
                        FOMObot.Helpers.CommandProcessor
                        FOMObot.Helpers.DMChannel
                        FOMObot.Helpers.FOMOChannel

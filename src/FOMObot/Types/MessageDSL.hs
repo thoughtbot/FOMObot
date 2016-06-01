@@ -13,7 +13,6 @@ import Control.Monad.State (StateT, get, modify)
 import Data.List (nub)
 import qualified Web.Slack as Slack
 
-import FOMObot.Helpers.Algorithm
 import FOMObot.Helpers.Free
 import FOMObot.Types.BotConfig
 import FOMObot.Types.ChannelState
@@ -80,3 +79,13 @@ runMessageDSL (Free (DetectEvent density g)) = do
         [ densitySurpassesThreshold
         , atLeastThreeUniqueUsers
         ]
+
+type Density = Double
+
+shiftIn :: Int -> a -> [a] -> [a]
+shiftIn size item xs
+    | isArrayFull xs size = item:init xs
+    | otherwise = item:xs
+
+isArrayFull :: [a] -> Int -> Bool
+isArrayFull xs size = length xs == size

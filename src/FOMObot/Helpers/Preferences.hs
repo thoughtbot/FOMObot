@@ -17,7 +17,7 @@ import qualified Web.Slack as Slack
 
 import FOMObot.Types.Bot
 
-addUserPrefs :: Slack.UserId -> [String] -> Bot ()
+addUserPrefs :: Slack.UserId -> [String] -> CommandDSL ()
 addUserPrefs uid prefs = do
     -- add channel prefs to user
     void $ R.liftRedis $ R.sadd (userPrefsKey uid) $ pack <$> prefs

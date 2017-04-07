@@ -11,8 +11,11 @@ import FOMObot.Helpers.Preferences
 import FOMObot.Types.Bot
 import FOMObot.Types.Command
 
-processCommand :: Slack.Event -> Bot ()
+processCommand :: Slack.Event -> Free DSL ()
 processCommand (Slack.Message cid (Slack.UserComment uid) txt _ _ _) =
+    --let process = parseCommand $ T.unpack txt
+    --runCommandDSL process
+
     case parseCommand $ T.unpack txt of
       (Add xs) -> addUserPrefs uid xs
       (Remove xs) -> removeUserPrefs uid xs

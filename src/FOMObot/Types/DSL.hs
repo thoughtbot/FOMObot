@@ -1,49 +1,39 @@
 {-# LANGUAGE DeriveFunctor #-}
 module FOMObot.Types.DSL
     ( DSL(..)
-    , processCommandF
-    , getBotConfig
-    , getChannelState
-    , saveChannelState
-    , getEventStatus
-    , alert
+    , getAppState
+    , saveAppState
+    , sendMessage
+    , runDatabase
     , end
     ) where
 
 import Control.Monad.Free (Free)
+import qualified Data.Text as T
+import Database.Redis (ConnectInfo, Redis)
 import qualified Web.Slack as Slack
 
 import FOMObot.Helpers.Free
-import FOMObot.Types.BotConfig
-import FOMObot.Types.ChannelState
-import FOMObot.Types.MessageDSL
+import FOMObot.Types.AppState
 
-data DSL a = ProcessCommand Slack.Event a
-           | GetBotConfig (BotConfig -> a)
-           | GetChannelState Slack.ChannelId (ChannelState -> a)
-           | SaveChannelState Slack.ChannelId ChannelState a
-           | GetEventStatus Slack.ChannelId (EventStatus -> a)
-           | Alert Slack.ChannelId a
+data DSL a = GetAppState (Slack.SlackState AppState -> a)
+           | SaveAppState (Slack.SlackState AppState) a
+           | SendMessage Slack.ChannelId T.Text a
+           | RunDatabase a
            | End
            deriving Functor
 
-processCommandF :: Slack.Event -> Free DSL ()
-processCommandF m = liftFree $ ProcessCommand m ()
+getAppState :: Free DSL (Slack.SlackState AppState)
+getAppState = liftFree $ GetAppState id
 
-getBotConfig :: Free DSL BotConfig
-getBotConfig = liftFree $ GetBotConfig id
+saveAppState :: Slack.SlackState AppState -> Free DSL ()
+saveAppState s = liftFree $ SaveAppState s ()
 
-getChannelState :: Slack.ChannelId -> Free DSL ChannelState
-getChannelState c = liftFree $ GetChannelState c id
+sendMessage :: Slack.ChannelId -> T.Text -> Free DSL ()
+sendMessage c t = liftFree $ SendMessage c t ()
 
-saveChannelState :: Slack.ChannelId -> ChannelState -> Free DSL ()
-saveChannelState c s = liftFree $ SaveChannelState c s ()
-
-getEventStatus :: Slack.ChannelId -> Free DSL EventStatus
-getEventStatus c = liftFree $ GetEventStatus c id
-
-alert :: Slack.ChannelId -> Free DSL ()
-alert c = liftFree $ Alert c ()
+runDatabase :: DatabaseDSL a -> Free DSL a
+runDatabase d = liftFree $ RunDatabase d 
 
 end :: Free DSL a
 end = liftFree End

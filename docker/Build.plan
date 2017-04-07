@@ -1,0 +1,4 @@
+FROM fpco/stack-build:lts-8.8
+
+COPY . /app
+WORKDIR /app

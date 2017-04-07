@@ -7,7 +7,7 @@ import URI.ByteString
     ( Authority(..)
     , Host(..)
     , Port(..)
-    , URI(..)
+    , URIRef(..)
     , UserInfo(..)
     , parseURI
     , strictURIParserOptions

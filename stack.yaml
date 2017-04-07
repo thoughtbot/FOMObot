@@ -2,13 +2,13 @@
 # https://github.com/commercialhaskell/stack/blob/release/doc/yaml_configuration.md
 
 # Specifies the GHC version and set of packages available
-resolver: lts-5.11
+resolver: lts-8.8
 
 packages:
   - '.'
 
 extra-deps:
-  - slack-api-0.8
+  - slack-api-0.12
   - hedis-0.8.3
   - scanner-0.2
 

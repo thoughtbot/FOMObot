@@ -37,7 +37,7 @@ executable fomobot
                      , NamedFieldPuns
                      , TemplateHaskell
 
-  build-depends:       base >=4.8 && <4.9
+  build-depends:       base >=4.9 && <4.10
                      , lens
                      , text
                      , hashmap

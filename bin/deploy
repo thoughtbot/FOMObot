@@ -2,4 +2,6 @@
 
 set -e
 
-heroku docker:release
+bin/docker-build
+docker tag fomobot-web "registry.heroku.com/fomobot-production/web"
+docker push "registry.heroku.com/fomobot-production/web"

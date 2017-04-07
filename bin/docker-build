@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+bin/pre-build
+
+docker build --tag fomobot-build --file docker/Build.plan .
+
+docker run --rm \
+  --volume "$PWD/docker/build/bin:/root/.local/bin" \
+  --volume "$PWD/docker/build/stack:/root/.stack" \
+  --volume "$PWD/docker/build/stack-work:/app/.stack-work" \
+  fomobot-build stack install --allow-different-user --system-ghc
+
+docker build --tag fomobot-web --file docker/Web.plan .

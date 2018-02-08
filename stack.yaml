@@ -12,6 +12,7 @@ extra-deps:
   - hedis-0.8.3
   - scanner-0.2
   - tagged-0.8.5
+  - transformers-compat-0.5.1.4
 
 # Extra directories used by stack for building
 extra-include-dirs: [/usr/local/opt/openssl/include]

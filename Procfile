@@ -1,1 +1,1 @@
-bot: ./fomobot
+worker: ./fomobot

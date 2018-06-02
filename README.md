@@ -58,19 +58,24 @@ Next, install the [Heroku Toolbelt].
 
 Log in to Heroku by running `heroku login`.
 
-Create a new app for this project by running `heroku apps:create YOUR_APP_NAME`.
-
-Set the same environment variables in your Heroku app as you have in `.env`.
-
-Finally, install the `heroku-docker` plugin.
+Create a new app for this project:
 
 ```
-heroku plugins:install heroku-docker
+heroku apps:create YOUR_APP_NAME
+heroku scale web=0 worker=1
+```
+
+Set the same environment variables in your Heroku app as you have in `.env` (excluding `HEROKU_APP_NAME`).
+
+Finally, install the Heroku container tools plugin:
+
+```
+heroku plugins:install heroku-container-tools
 ```
 
 ## Deploying to Heroku
 
-Simply run `heroku docker:release`.
+Confirm `HEROKU_APP_NAME` is set correctly in `.env` and run `bin/deploy`.
 
 ## Contributing
 

@@ -1,6 +1,12 @@
+# used for Heroku deployments
 HEROKU_APP_NAME=fomobot-production
+# "API Token" from the Slack config for this bot
 SLACK_API_TOKEN=
+# number of messages in a conversation
 HISTORY_SIZE=10
+# only notify this often per channel
 FOMO_DEBOUNCE=20
+# messages per minute to qualify as a FOMO event
 FOMO_THRESHOLD=5
+# Redis URL is set automatically when the Redis add-on is added in Heroku
 REDIS_URL=redis://127.0.0.1:6379/1

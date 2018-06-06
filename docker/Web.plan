@@ -8,6 +8,7 @@ WORKDIR /app
 
 RUN apt-get update \
   && apt-get install -y \
+    netbase \
     ca-certificates \
     libgmp10 \
     libpq5 \

@@ -2,6 +2,11 @@
 
 set -e
 
+set -o allexport
+source .env
+set +o allexport
+
 bin/docker-build
-docker tag fomobot-web "registry.heroku.com/fomobot-production/web"
-docker push "registry.heroku.com/fomobot-production/web"
+docker tag fomobot-worker "registry.heroku.com/${HEROKU_APP_NAME}/worker"
+docker push "registry.heroku.com/${HEROKU_APP_NAME}/worker"
+heroku container:release worker

@@ -12,4 +12,4 @@ docker run --rm \
   --volume "$PWD/docker/build/stack-work:/app/.stack-work" \
   fomobot-build stack install --allow-different-user --system-ghc
 
-docker build --tag fomobot-web --file docker/Web.plan .
+docker build --tag fomobot-worker --file docker/Worker.plan .

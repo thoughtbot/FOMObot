@@ -30,7 +30,7 @@ alertFOMOChannel channelID = do
     fomoChannel <- view Slack.channelId <$> getFOMOChannel
     Slack.sendMessage fomoChannel message
   where
-    message = "Check out <#" <> (channelID ^. Slack.getId) <> ">"
+    message = "<!here> There's a party in <#" <> (channelID ^. Slack.getId) <> ">!"
 
 alertUsers :: [String] -> Slack.ChannelId -> Bot ()
 alertUsers uids cid = mapM_ (\uid -> do
@@ -38,4 +38,4 @@ alertUsers uids cid = mapM_ (\uid -> do
     let channelId = (review Slack.getId) . T.pack <$> channel
     maybe (return ()) (`Slack.sendMessage` message) channelId) uids
   where
-    message = "Check out <#" <> (cid ^. Slack.getId) <> ">"
+    message = "There's a party in <#" <> (cid ^. Slack.getId) <> ">!"
